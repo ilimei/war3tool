@@ -20,7 +20,7 @@ config.resolve.extensions.merge(['.ts', '.js', '.tsx', '.json']).end();
 
 config.output
     .path(path.resolve(__dirname, "./docs"))
-    .publicPath("/war3tool")
+    .publicPath("/war3tool/")
     .filename('[name].[contenthash:5].js')
     .end()
 
