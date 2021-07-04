@@ -1,4 +1,5 @@
 import * as decodeJPEG from './jpgDecoder';
+var jpeg = require('jpeg-js');
 
 export enum BLPType {
     BLP0,
@@ -45,7 +46,7 @@ function uint32(view: DataView, offset: number): number {
     return view.getUint32(offset * 4, true);
 }
 
-function bitVal (data: Uint8Array, bitCount: number, index: number): number {
+function bitVal(data: Uint8Array, bitCount: number, index: number): number {
     // only 1, 4 or 8 bits
     let byte = data[Math.floor(index * bitCount / 8)],
         valsPerByte = 8 / bitCount;
@@ -102,7 +103,7 @@ export function decode(arrayBuffer: ArrayBuffer): BLPImage {
 }
 
 // node.js have no native ImageData
-function createImageData (width: number, height: number): ImageDataLike {
+function createImageData(width: number, height: number): ImageDataLike {
     if (typeof ImageData !== 'undefined') {
         return new ImageData(width, height);
     } else {
@@ -124,10 +125,14 @@ export function getImageData(blp: BLPImage, mipmapLevel: number): ImageDataLike 
         let headerSize = uint32(view, 39),
             data = new Uint8Array(headerSize + mipmap.size);
 
+        console.info('jpeg header size', headerSize);
+
         data.set(uint8Data.subarray(40 * 4, 40 * 4 + headerSize));
         data.set(uint8Data.subarray(mipmap.offset, mipmap.offset + mipmap.size), headerSize);
-
         return decodeJPEG(data);
+        // const { width, height, data: jpegData } = jpeg.decode(data, { useTArray: true });
+        // var imgData = new ImageData(new Uint8ClampedArray(jpegData), width, height);
+        // return imgData;
     } else {
         let palette = new Uint8Array(blp.data, 39 * 4, 256 * 4),
             width = blp.width / (1 << mipmapLevel),

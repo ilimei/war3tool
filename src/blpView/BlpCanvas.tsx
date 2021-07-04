@@ -15,6 +15,7 @@ export const BlpCanvas: React.FC<BlpCanvasProps> = ({ file }) => {
                 const ctx = canvasRef.current.getContext("2d");
                 const buf = await file.arrayBuffer();
                 const blpImg = decode(buf);
+                console.info(blpImg);
                 setWidth(blpImg.width);
                 setHeight(blpImg.height);
                 const imageData = getImageData(blpImg, 0);
