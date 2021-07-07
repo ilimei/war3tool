@@ -76,8 +76,7 @@ export const BlpView: React.FC<BlpViewProps> = ({ }) => {
                 </p>
                 <p className="ant-upload-text">点击或者拖拽blp文件进来</p>
                 <p className="ant-upload-hint">
-                    Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-                    band files
+                    支持拖拽多个文件进入
                 </p>
             </>
         )}

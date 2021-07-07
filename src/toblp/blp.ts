@@ -10,19 +10,6 @@
 //     uint32_t    offsets[16];
 //     uint32_t    lengths[16];
 // };
-
-import { decode } from "../blpView/binReader";
-import * as decodeJPEG from '../blpView/jpgDecoder';
-var jpeg = require('jpeg-js');
-
-// struct tBGRAPixel
-// {
-//     uint8_t b;
-//     uint8_t g;
-//     uint8_t r;
-//     uint8_t a;
-// };
-
 function setString(view: DataView, str: string, offset: number) {
     for (let i = 0; i < str.length; i++) {
         view.setUint8(offset + i, str.charCodeAt(i));
@@ -72,18 +59,10 @@ export class BLP2Header {
         const ret = new Uint8Array(arr.byteLength + this.data.byteLength);
         ret.set(arr);
         ret.set(new Uint8Array(this.data), 160);
-        console.info(decode(ret.buffer));
         const blob = new Blob([ret], {type : 'application/blp'})
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
         link.download = 'test.blp';
         link.click();
-        // console.info();
-        const {width, height, data} = jpeg.decode(this.data, {useTArray: true});
-        console.info(width, height, data)
-        var imgData = new ImageData(new Uint8ClampedArray(data), width, height);
-        const img = await createImageBitmap(imgData);
-        return img;
-       
     }
 }

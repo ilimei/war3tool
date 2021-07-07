@@ -749,7 +749,6 @@ var JpegImage = (function jpegImage() {
                         var spectralStart = data[offset++];
                         var spectralEnd = data[offset++];
                         var successiveApproximation = data[offset++];
-                        console.info(spectralStart, spectralEnd, successiveApproximation);
                         var processed = decodeScan(data, offset,
                             frame, components, resetInterval,
                             spectralStart, spectralEnd,

@@ -1,7 +1,7 @@
-import { Button } from "antd";
+import { Button, message } from "antd";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { BLP2Header } from './blp';
-var jpeg = require('jpeg-js');
+import { encode } from "./jpegasm";
 
 export interface ImgCanvasProps {
     file: File
@@ -19,26 +19,24 @@ export const ImgCanvas: React.FC<ImgCanvasProps> = ({ file }) => {
             const ctx = canvasRef.current.getContext('2d');
             const imageData = ctx.getImageData(0, 0, 256, 256);
             console.info(imageData);
-            const data = imageData.data.map((v, index) => {
-                if (index % 4 === 0) {
-                    return imageData.data[index + 2];
+            const modify = new Uint8ClampedArray(imageData.data.length)
+            for (let i = 0, j = 0; i < modify.length; i += 4) {
+                modify[j++] = imageData.data[i + 2];
+                modify[j++] = imageData.data[i + 1];
+                modify[j++] = imageData.data[i];
+                modify[j++] = imageData.data[i + 3];
+            }
+            encode(modify.buffer, {
+                width: imageData.width,
+                height: imageData.height,
+                quality: 80
+            }, async (err: string, encoded: ArrayBuffer) => {
+                if(err) {
+                    message.error(err);
+                } else {
+                    new BLP2Header(256, 256, new Uint8ClampedArray(encoded)).toUint8Array();
                 }
-                if (index % 4 === 2) {
-                    return imageData.data[index - 2];
-                }
-                return v;
-            })
-            console.info(data);
-            const jpegData = jpeg.encode({ data: new Uint8ClampedArray(data), width: imageData.width, height: imageData.height }, 80);
-            console.info(jpegData);
-            const img = await new BLP2Header(256, 256, jpegData.data).toUint8Array();
-            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, 256, 256)
-            // canvasRef.current.toBlob(async function (blob) {
-            //     const buff = await blob.arrayBuffer();
-            //     const img = await new BLP2Header(256, 256, buff).toUint8Array();
-            //     const ctx = canvasRef.current.getContext("2d");
-            //     ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, 256, 256)
-            // }, "image/jpeg", 1);
+            });
         }
     }, [canvasRef.current, width, height]);
 
@@ -53,10 +51,8 @@ export const ImgCanvas: React.FC<ImgCanvasProps> = ({ file }) => {
                     img.src = this.result as string;
                     img.onload = () => {
                         ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, 256, 256)
-                        console.dir(img);
                         setWidth(img.width);
                         setHeight(img.height);
-                        console.info(img.height);
                     }
                 }
             }

@@ -1,5 +1,4 @@
 import * as decodeJPEG from './jpgDecoder';
-var jpeg = require('jpeg-js');
 
 export enum BLPType {
     BLP0,
@@ -129,10 +128,7 @@ export function getImageData(blp: BLPImage, mipmapLevel: number): ImageDataLike 
 
         data.set(uint8Data.subarray(40 * 4, 40 * 4 + headerSize));
         data.set(uint8Data.subarray(mipmap.offset, mipmap.offset + mipmap.size), headerSize);
-        return decodeJPEG(data);
-        // const { width, height, data: jpegData } = jpeg.decode(data, { useTArray: true });
-        // var imgData = new ImageData(new Uint8ClampedArray(jpegData), width, height);
-        // return imgData;
+        return decodeJPEG(data)
     } else {
         let palette = new Uint8Array(blp.data, 39 * 4, 256 * 4),
             width = blp.width / (1 << mipmapLevel),
