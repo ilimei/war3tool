@@ -1,0 +1,30 @@
+.resizer {
+    position: absolute;
+    border: 1px solid #ccc;
+    &-box {
+        position: absolute;
+        width:5px;
+        height: 5px;
+        pointer-events: none;
+        border: 1px solid #ccc;
+        background-color: #fff;
+    }
+
+    &-topLeft {
+        left: -2.5px;
+        top: -2.5px;
+    }
+
+    &-topRight {
+        right: -2.5px;
+        top: -2.5px;
+    }
+    &-bottomLeft {
+        left: -2.5px;
+        bottom: -2.5px;
+    }
+    &-bottomRight {
+        bottom: -2.5px;
+        right: -2.5px;
+    }
+}

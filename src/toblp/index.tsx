@@ -3,6 +3,7 @@ import { Col, Row, Tabs, Upload } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { DraggerProps } from "antd/lib/upload";
 import ImgCanvas from "./ImgCanvas";
+import Resizer from "./resizer";
 
 const { Dragger } = Upload;
 
@@ -22,6 +23,7 @@ export const ToBlp: React.FC<ToBlpProps> = ({ }) => {
             console.info(info.file);
             // @ts-ignore
             setFile(info.file);
+            console.info(info.file);
             // setSelIndex(0);
             // setFileList(info.fileList.map(v => v.originFileObj));
             // console.info(getImageData(blpImg, 0));
@@ -44,7 +46,7 @@ export const ToBlp: React.FC<ToBlpProps> = ({ }) => {
                 <p className="ant-upload-text">点击或者拖拽图片文件进来</p>
             </>
         )}
-
+        <Resizer/>
     </Dragger>
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Col, Row, Tabs, Upload } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { DraggerProps } from "antd/lib/upload";
@@ -49,10 +49,24 @@ export const BlpView: React.FC<BlpViewProps> = ({ }) => {
         </div>
     }
 
+    useEffect(() => {
+        const keyEvent = (e: KeyboardEvent) => {
+            switch (e.key) {
+                case 'ArrowDown': 
+                    setSelIndex(Math.min(selIndex + 1, fileList.length - 1)); 
+                    break;
+                case 'ArrowUp': setSelIndex(Math.max(selIndex - 1, 0)); break;
+                default: break;
+            }
+        };
+        window.addEventListener("keyup", keyEvent);
+        return () => window.removeEventListener('keyup', keyEvent);
+    }, [fileList, selIndex])
+
     return <Dragger fileList={[]} {...props}>
         {fileList.length > 0 ? (<>
             <Row onClick={e => (e.stopPropagation(), e.preventDefault())}>
-                <Col span={4} >
+                <Col span={10} style={{ width: 300 }} >
                     <List
                         height={400}
                         overscanRowCount={20}
@@ -62,10 +76,11 @@ export const BlpView: React.FC<BlpViewProps> = ({ }) => {
                             40
                         }
                         rowRenderer={_rowRenderer}
+                        scrollToIndex={selIndex}
                         width={300}
                     />
                 </Col>
-                <Col span={20}>
+                <Col span={10}>
                     <BlpCanvas file={fileList[selIndex]} />
                 </Col>
             </Row>

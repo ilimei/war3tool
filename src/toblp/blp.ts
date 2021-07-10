@@ -42,7 +42,7 @@ export class BLP2Header {
         this.data = buf;
     }
 
-    async toUint8Array() {
+    async toUint8Array(name: string) {
         console.info(this.data.byteLength);
         const arr = new Uint8Array(160)
         const view = new DataView(arr.buffer, 0, arr.byteLength);
@@ -62,7 +62,7 @@ export class BLP2Header {
         const blob = new Blob([ret], {type : 'application/blp'})
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
-        link.download = 'test.blp';
+        link.download = name + ".blp";
         link.click();
     }
 }
