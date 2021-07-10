@@ -25,8 +25,8 @@ export const ImgCanvas: React.FC<ImgCanvasProps> = ({ file }) => {
     const handleClick = useCallback(async (e: React.MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
-        if (canvasRef.current) {
-            const ctx = canvasRef.current.getContext('2d');
+        if (distCanvasRef.current) {
+            const ctx = distCanvasRef.current.getContext('2d');
             const imageData = ctx.getImageData(0, 0, size, size);
             console.info(imageData);
             const modify = new Uint8ClampedArray(imageData.data.length)
@@ -48,7 +48,7 @@ export const ImgCanvas: React.FC<ImgCanvasProps> = ({ file }) => {
                 }
             });
         }
-    }, [canvasRef.current, width, height, size, file]);
+    }, [distCanvasRef.current, width, height, size, file]);
 
     useEffect(() => {
         (async () => {
