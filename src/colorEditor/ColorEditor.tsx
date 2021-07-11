@@ -1,4 +1,4 @@
-import { message } from "antd";
+import { Col, message, Row, Switch } from "antd";
 import React, { useCallback, useRef, useState } from "react";
 import "./style.less";
 
@@ -11,7 +11,7 @@ function parseRGBStr(str: string): string {
     console.info("parseRGBStr", str, str.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/));
     if (/rgb\((\d+),\s*(\d+),\s*(\d+)\)/.test(str)) {
         const [, r, g, b] = str.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-        return parseInt(r, 10).toString(16) + parseInt(g, 10).toString(16) + parseInt(b, 10).toString(16);
+        return parseInt(r, 10).toString(16).padStart(2, '0') + parseInt(g, 10).toString(16).padStart(2, '0') + parseInt(b, 10).toString(16).padStart(2, '0');
     }
     return str;
 }
@@ -23,6 +23,8 @@ export interface ColorEditorProps {
 export const ColorEditor: React.FC<ColorEditorProps> = (props) => {
     const editorRef = useRef<HTMLDivElement>(null);
     const [war3Txt, setWar3Txt] = useState("渐变的文字");
+    const [trans, setTrans] = useState(false);
+
     const [normalColor, setNormalColor] = useState({
         r: 255,
         g: 255,
@@ -39,17 +41,23 @@ export const ColorEditor: React.FC<ColorEditorProps> = (props) => {
         b: 0
     });
 
+    const handleTransChange = useCallback((checked) => {
+        setTrans(checked);
+    }, [])
+
     function toResult() {
         if (editorRef.current) {
-            setWar3Txt(editorRef.current.innerHTML
+            var result = JSON.stringify(editorRef.current.innerHTML
                 .replace(/<div>/g, '\n')
                 .replace(/<br>/g, '\n')
                 .replace(/<\/div>/g, '')
+                .replace(/&nbsp;/g, ' ')
                 .replace(/<\/span>/g, '|r')
                 .replace(/<\/font>/g, '|r')
                 .replace(/<font color="#([a-f\d]+)">/g, (t, $1) => `|cff${$1.toUpperCase()}`)
                 .replace(/<span\s*style="color: ([\S\s]+?);">/g, (t, $1) => `|cff${parseRGBStr($1).toUpperCase()}`)
-                .replace(/\|r\|c/g, "\|c"))
+                .replace(/\|r\|c/g, "\|c"));
+            setWar3Txt(result.slice(1, result.length - 1))
         }
     }
 
@@ -68,21 +76,22 @@ export const ColorEditor: React.FC<ColorEditorProps> = (props) => {
     }, []);
 
     const handleCopy = useCallback(() => {
+        const cpTxt =  trans ? war3Txt : war3Txt.replace(/\\n/g,"\n")
         const copy = function (e) {
             e.preventDefault();
             if (e.clipboardData) {
-                e.clipboardData.setData('text/plain', war3Txt);
+                e.clipboardData.setData('text/plain', cpTxt);
                 // @ts-expect-error
             } else if (window.clipboardData) {
                 // @ts-expect-error
-                window.clipboardData.setData('Text', war3Txt);
+                window.clipboardData.setData('Text', cpTxt);
             }
             message.success("复制成功")
         }
         window.addEventListener('copy', copy);
         document.execCommand('copy');
         window.removeEventListener('copy', copy);
-    }, [war3Txt]);
+    }, [war3Txt, trans]);
 
     const handleNormalColor = useCallback(() => {
         document.execCommand('foreColor', false,
@@ -130,8 +139,13 @@ export const ColorEditor: React.FC<ColorEditorProps> = (props) => {
             end:<input onChange={colorChange.bind(this, setStopColor)} type="color" value={toHex(stopColor)} />
             <button id="flow" onClick={handleFlowColor}>确定</button>
         </div>
+        <Row>
+            <Col span={16}>
+            是否转译换行 <Switch checked={trans} onChange={handleTransChange} />
+            </Col>
+        </Row>
         <div className="result">
-            <pre>{war3Txt}</pre>
+            <pre>{trans ? war3Txt : war3Txt.replace(/\\n/g,"\n")}</pre>
         </div>
         <button onClick={handleCopy}>一键复制</button>
     </>
