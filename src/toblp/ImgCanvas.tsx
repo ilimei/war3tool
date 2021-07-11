@@ -8,6 +8,34 @@ export interface ImgCanvasProps {
     file: File
 }
 
+function getContextData(ctx: CanvasRenderingContext2D, size: number): Uint8ClampedArray {
+    const imageData = ctx.getImageData(0, 0, size, size);
+    const modify = new Uint8ClampedArray(imageData.data.length)
+    for (let i = 0, j = 0; i < modify.length; i += 4) {
+        modify[j++] = imageData.data[i + 2];
+        modify[j++] = imageData.data[i + 1];
+        modify[j++] = imageData.data[i];
+        modify[j++] = imageData.data[i + 3];
+    }
+    return modify;
+}
+
+function encodeJpeg(buf: ArrayBuffer, options: {
+    width: number;
+    height: number;
+    quality: number;
+}): Promise<Uint8ClampedArray> {
+    return new Promise((resolve, reject) => {
+        encode(buf, options, async (err: string, encoded: ArrayBuffer) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(new Uint8ClampedArray(encoded))
+            }
+        });
+    });
+}
+
 export const ImgCanvas: React.FC<ImgCanvasProps> = ({ file }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const distCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -27,26 +55,27 @@ export const ImgCanvas: React.FC<ImgCanvasProps> = ({ file }) => {
         e.preventDefault();
         if (distCanvasRef.current) {
             const ctx = distCanvasRef.current.getContext('2d');
-            const imageData = ctx.getImageData(0, 0, size, size);
-            console.info(imageData);
-            const modify = new Uint8ClampedArray(imageData.data.length)
-            for (let i = 0, j = 0; i < modify.length; i += 4) {
-                modify[j++] = imageData.data[i + 2];
-                modify[j++] = imageData.data[i + 1];
-                modify[j++] = imageData.data[i];
-                modify[j++] = imageData.data[i + 3];
+            let miniArray: Uint8ClampedArray[] = [];
+            if (size > 32) {
+                const cas = document.createElement('canvas');
+                cas.width = 32;
+                cas.height = 32;
+                const ctx = cas.getContext('2d');
+                ctx.drawImage(distCanvasRef.current, 0, 0, size, size, 0, 0, 32, 32);
+                const modify = getContextData(ctx, 32);
+                miniArray.push(await encodeJpeg(modify.buffer, {
+                    width: 32,
+                    height: 32,
+                    quality: 80
+                }));
             }
-            encode(modify.buffer, {
-                width: imageData.width,
-                height: imageData.height,
+            const modify = getContextData(ctx, size);
+            const jpegArray = await encodeJpeg(modify.buffer, {
+                width: size,
+                height: size,
                 quality: 80
-            }, async (err: string, encoded: ArrayBuffer) => {
-                if (err) {
-                    message.error(err);
-                } else {
-                    new BLP2Header(size, size, new Uint8ClampedArray(encoded)).toUint8Array(file.name);
-                }
             });
+            new BLP2Header(size, size, jpegArray, miniArray).toUint8Array(file.name);
         }
     }, [distCanvasRef.current, width, height, size, file]);
 

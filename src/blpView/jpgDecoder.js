@@ -603,6 +603,7 @@ var JpegImage = (function jpegImage() {
             fileMarker = readUint16();
             while (fileMarker != 0xFFD9) { // EOI (End of image)
                 var i, j, l;
+                console.info("fileMarker", fileMarker.toString(16))
                 switch(fileMarker) {
                     case 0xFFE0: // APP0 (Application Specific)
                     case 0xFFE1: // APP1
@@ -639,6 +640,7 @@ var JpegImage = (function jpegImage() {
                         }
                         // TODO APP1 - Exif
                         if (fileMarker === 0xFFEE) {
+                            console.info(appData);
                             if (appData[0] === 0x41 && appData[1] === 0x64 && appData[2] === 0x6F &&
                                 appData[3] === 0x62 && appData[4] === 0x65 && appData[5] === 0) { // 'Adobe\x00'
                                 adobe = {
@@ -671,11 +673,13 @@ var JpegImage = (function jpegImage() {
                                 throw "DQT: invalid table spec";
                             quantizationTables[quantizationTableSpec & 15] = tableData;
                         }
+                        console.info(quantizationTables);
                         break;
 
                     case 0xFFC0: // SOF0 (Start of Frame, Baseline DCT)
                     case 0xFFC1: // SOF1 (Start of Frame, Extended DCT)
                     case 0xFFC2: // SOF2 (Start of Frame, Progressive DCT)
+                        console.info('offset', offset, fileMarker.toString(16));
                         if (frame) {
                             throw "Only single frame JPEGs supported";
                         }
@@ -707,6 +711,7 @@ var JpegImage = (function jpegImage() {
                         }
                         frame.maxH = maxH;
                         frame.maxV = maxV;
+                        console.info(frame);
                         prepareComponents(frame);
                         break;
 
@@ -735,6 +740,7 @@ var JpegImage = (function jpegImage() {
                         break;
 
                     case 0xFFDA: // SOS (Start of Scan)
+                        
                         var scanLength = readUint16();
                         var selectorsCount = data[offset++];
                         var components = [], component;

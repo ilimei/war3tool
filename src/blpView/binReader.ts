@@ -84,6 +84,8 @@ export function decode(arrayBuffer: ArrayBuffer): BLPImage {
     image.alphaBits = uint32(view, 2);
     image.width = uint32(view, 3);
     image.height = uint32(view, 4);
+    console.info('5', uint32(view, 5))
+    console.info('6', uint32(view, 6))
 
     for (let i = 0; i < 16; ++i) {
         let mipmap = {
