@@ -200,6 +200,12 @@ export const Chenghao: React.FC<ChenghaoProps> = (props) => {
         canvas.requestRenderAll();
     }, [text]);
 
+    const charSpaceChange = useCallback((value) => {
+        text.set("charSpacing", value * 10);
+        text.set("dirty", true);
+        canvas.requestRenderAll();
+    }, [text])
+
     const strokeWidthChange = useCallback((value) => {
         text.set("strokeWidth", value);
         text.set("dirty", true);
@@ -260,7 +266,6 @@ export const Chenghao: React.FC<ChenghaoProps> = (props) => {
                 quality: 80
             }));
         }));
-        console.info(miniArray);
         const blob = await new BLP2Header(512, 128, jpegArray, miniArray).toBlob();
         const buf = await (await fetch(FileImage)).arrayBuffer();
         const model = parse(buf);
@@ -294,6 +299,9 @@ export const Chenghao: React.FC<ChenghaoProps> = (props) => {
             </Form.Item>
             <Form.Item label="加粗">
                 <Switch defaultChecked onChange={fontWeightChange} />
+            </Form.Item>
+            <Form.Item label="字符间距">
+                <Slider defaultValue={24} onChange={charSpaceChange} />
             </Form.Item>
             <Form.Item label="边框">
                 <Slider defaultValue={2} onChange={strokeWidthChange} />
