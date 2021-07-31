@@ -76,6 +76,16 @@ export class BLP2Header {
         return arr;
     }
 
+
+    async toBlob() {
+        const ret = this.toImgToUnit8Array([
+            this.data,
+            ...this.miniBuf
+        ].filter(v => v))
+        const blob = new Blob([ret], { type: 'application/blp' })
+        return blob;
+    }
+
     async toUint8Array(name: string) {
         const ret = this.toImgToUnit8Array([
             this.data,

@@ -19,5 +19,10 @@ ReactDOM.render(<MenuLayout configs={[
         title: "转blp",
         path: '/ToBlp',
         component: loadCMP(() => import("./ToBlp"))
+    },
+    {
+        title: "称号模型生成",
+        path: '/chenghao',
+        component: loadCMP(() => import("./Chenghao"))
     }
 ]} />, document.getElementById('root'));

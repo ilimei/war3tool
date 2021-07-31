@@ -40,11 +40,28 @@ config.module
     .use('less-loader')
     .loader('less-loader')
     .options({
-        lessOptions:{
+        lessOptions: {
             javascriptEnabled: true
         }
     })
     .end()
+
+config.module
+    .rule('mdx')
+    .test(/\.(mdx)$/i)
+    .use('file-loader')
+    .options({
+        name(resourcePath: string, resourceQuery: string) {
+            // `resourcePath` - `/absolute/path/to/file.js`
+            // `resourceQuery` - `?foo=bar`
+
+            if (process.env.NODE_ENV === 'development') {
+                return '[path][name].[ext]';
+            }
+
+            return '[contenthash].[ext]';
+        },
+    })
 
 config.module
     .rule('compile')

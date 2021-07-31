@@ -19,6 +19,9 @@ export const BlpCanvas: React.FC<BlpCanvasProps> = ({ file }) => {
                 setWidth(blpImg.width);
                 setHeight(blpImg.height);
                 const imageData = getImageData(blpImg, 0);
+                for(let i=0;i<blpImg.mipmaps.length;i++) {
+                    console.info(getImageData(blpImg, i));
+                }
                 const img = await createImageBitmap(imageData);
                 ctx.drawImage(img, 0, 0)
             }
