@@ -1,0 +1,30 @@
+.radiuSelect {
+    width: 100px;
+    height: 100px;
+    border-radius: 100%;
+    border: 1px solid #000;
+    user-select: none;
+    position: relative;
+    &::before {
+        content: "";
+        display: block;
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        border-radius: 100%;
+        background-color: black;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .pointer-line {
+        position: absolute;
+        width: 50px;
+        height: 2px;
+        top: 48px;
+        left: -1px;
+        background-color: black;
+        transform: rotate(0deg);
+        transform-origin: right;
+    }
+}

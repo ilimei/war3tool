@@ -1,0 +1,47 @@
+.gradient {
+    position: relative;
+    width: 100%;
+    .gradient-show {
+        width: 100%;
+        border:1px solid #000;
+        height: 30px;
+        background-color: #000;
+    }
+
+    @size: 6px;
+
+    .colorStops {
+        cursor: pointer;
+        width: 100%;
+        height:@size * 3;
+        user-select: none;
+
+    }
+    .colorStop {
+        position: absolute;
+        cursor: default;
+        transform: translateX(-@size);
+        &::before {
+            content: "";
+            display: block;
+            border:@size solid transparent;
+            border-bottom: @size solid rgb(104, 104, 104);
+            margin-top: -@size;
+            width: @size * 2;
+            height: @size * 2;
+        }
+        .colorBox {
+            width: @size * 2;
+            height: @size * 2;
+            background: #000;
+            border: 1px solid #000;
+        }
+    }
+}
+.del-icon {
+    position: absolute;
+    color: red;
+    top: -16px;
+    transform: translateX(14px);
+    cursor: pointer;
+}

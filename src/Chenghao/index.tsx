@@ -10,6 +10,8 @@ import { BLP2Header } from "../ToBlp/blp";
 import FileImage from '!!file-loader!./genStore.mdx';
 import { parse } from "./parse";
 import { generate } from "./generate";
+import Gradient from "./gradient";
+import RaiduSelect from "./radiuSelect";
 
 const startX = 44;
 const startY = 192;
@@ -142,7 +144,6 @@ export const Chenghao: React.FC<ChenghaoProps> = (props) => {
 
     useEffect(() => {
         if (ref) {
-            console.info('---------useEffect----------', ref);
             setCanvas(new fabric.Canvas(ref));
         }
     }, [ref]);
@@ -215,14 +216,29 @@ export const Chenghao: React.FC<ChenghaoProps> = (props) => {
         canvas.requestRenderAll();
     }, [text]);
 
-    const gradienStartColorChange = useCallback((value) => {
-        gradien.colorStops[0].color = value.hex;
+    const gradientColorChange = useCallback((stops) => {
+        if (!gradien) return;
+        gradien.colorStops = stops;
         text.set("dirty", true);
         canvas.requestRenderAll();
     }, [text, gradien]);
 
-    const gradienEndColorChange = useCallback((value) => {
-        gradien.colorStops[1].color = value.hex;
+    const handleGradientCoords = useCallback((value) => {
+        if (!gradien) return;
+        const nCoords = { x1: 0, y1: 0, x2: -Math.cos(value / 180 * Math.PI), y2: Math.sin(value / 180 * Math.PI) }
+        if (value > 0) {
+            nCoords.y1 = 1;
+            nCoords.y2 = 1 - nCoords.y2
+        } else {
+            nCoords.y2 *= -1;
+        }
+        if (Math.abs(value) < 90) {
+            nCoords.x1 = 1;
+            nCoords.x2 = 1 + nCoords.x2
+        } else {
+            nCoords.x1 = 0;
+        }
+        gradien.coords = nCoords;
         text.set("dirty", true);
         canvas.requestRenderAll();
     }, [text, gradien]);
@@ -306,11 +322,14 @@ export const Chenghao: React.FC<ChenghaoProps> = (props) => {
             <Form.Item label="边框颜色">
                 <ColorPicker defaultColor="#000" onChange={strokeColorChange} />
             </Form.Item>
-            <Form.Item label="渐变开始颜色">
-                <ColorPicker defaultColor="#14DEC3" onChange={gradienStartColorChange} />
+            <Form.Item label="渐变">
+                <Gradient value={[
+                    { offset: 0, color: "#14DEC3" },
+                    { offset: 1, color: "#F5F8BA" }
+                ]} onChange={gradientColorChange} />
             </Form.Item>
-            <Form.Item label="渐变结束颜色">
-                <ColorPicker defaultColor="#F5F8BA" onChange={gradienEndColorChange} />
+            <Form.Item label="渐变方向">
+                <RaiduSelect defaultValue={-90} onChange={handleGradientCoords} />
             </Form.Item>
             <UpdateBtn onAddFile={handleAddFile} /> &nbsp;
             <Button type="primary" onClick={exportModal}>导出称号模型</Button>

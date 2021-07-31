@@ -41,6 +41,7 @@
         "webpack-dev-server": "^3.11.2"
     },
     "dependencies": {
+        "@ant-design/icons": "^4.6.2",
         "@types/fabric": "^4.5.1",
         "@types/react-color": "^3.0.5",
         "fabric": "^4.5.1",
