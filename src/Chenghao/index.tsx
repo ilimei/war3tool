@@ -11,14 +11,11 @@ import FileImage from '!!file-loader!./genStore.mdx';
 import { parse } from "./parse";
 import { generate } from "./generate";
 
-// require("./genStore.mdx");
-console.info(FileImage);
+const startX = 44;
+const startY = 192;
 
-
-
-
-function getContextData(ctx: CanvasRenderingContext2D, wSize: number, hSize: number): Uint8ClampedArray {
-    const imageData = ctx.getImageData(0, 0, wSize, hSize);
+function getContextData(ctx: CanvasRenderingContext2D, startX: number, startY: number, wSize: number, hSize: number): Uint8ClampedArray {
+    const imageData = ctx.getImageData(startX, startY, wSize, hSize);
     const modify = new Uint8ClampedArray(imageData.data.length)
     for (let i = 0, j = 0; i < modify.length; i += 4) {
         modify[j++] = imageData.data[i + 2];
@@ -168,8 +165,8 @@ export const Chenghao: React.FC<ChenghaoProps> = (props) => {
             fill: gradien,
             strokeWidth: 2,
             stroke: "#000",
-            top: 40,
-            left: 60,
+            top: startY + 40,
+            left: startX + 60,
         });
 
         setGradien(gradien);
@@ -245,7 +242,7 @@ export const Chenghao: React.FC<ChenghaoProps> = (props) => {
     const exportModal = useCallback(async () => {
         canvas.discardActiveObject();
         canvas.renderAll();
-        const modify = getContextData(canvas.contextContainer, 512, 128);
+        const modify = getContextData(canvas.contextContainer, startX, startY, 512, 128);
         const jpegArray = await encodeJpeg(modify.buffer, {
             width: 512,
             height: 128,
@@ -258,8 +255,8 @@ export const Chenghao: React.FC<ChenghaoProps> = (props) => {
             cas.width = x;
             cas.height = y;
             const ctx = cas.getContext('2d');
-            ctx.drawImage(canvas.lowerCanvasEl, 0, 0, 512, 128, 0, 0, x, y);
-            const modify = getContextData(ctx, x, y);
+            ctx.drawImage(canvas.lowerCanvasEl, startX, startY, 512, 128, 0, 0, x, y);
+            const modify = getContextData(ctx, 0, 0, x, y);
             miniArray.push(await encodeJpeg(modify.buffer, {
                 width: x,
                 height: y,
@@ -320,7 +317,7 @@ export const Chenghao: React.FC<ChenghaoProps> = (props) => {
         </div>
         <div className="rightPanel">
             <div className="chenghao">
-                <canvas width="512" height="128" ref={setRef} />
+                <canvas width="600" height="512" ref={setRef} />
             </div>
         </div>
     </div>

@@ -1422,6 +1422,18 @@
 }
 
 .chenghao {
+  width: 600px;
+  height: 512px;
+  border: 1px solid #ccc;
+  position: relative;
+  background-color: #707070;
+}
+.chenghao::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 192px;
+  left: 44px;
   background-color: black;
   background-image: linear-gradient(45deg, #141414 25%, transparent 25%, transparent 75%, #141414 75%, #141414), linear-gradient(45deg, #141414 25%, transparent 25%, transparent 75%, #141414 75%, #141414);
   background-position: 0 0, 8px 8px;

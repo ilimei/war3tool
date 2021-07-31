@@ -1,11 +1,25 @@
 .chenghao {
-    background-color: black;
-    background-image: linear-gradient(45deg, rgb(20, 20, 20) 25%, transparent 25%, transparent 75%, rgb(20, 20, 20) 75%, rgb(20, 20, 20)), 
-    linear-gradient(45deg, rgb(20, 20, 20) 25%, transparent 25%, transparent 75%, rgb(20, 20, 20) 75%, rgb(20, 20, 20));
-    background-position: 0 0, 8px 8px;
-    background-size: 16px 16px;
-    width: 512px;
-    height: 128px;
+
+    width: 600px;
+    height: 512px;
+    border: 1px solid #ccc;
+    position: relative;
+    background-color: rgb(112, 112, 112);
+
+    &::before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 192px;
+        left: 44px;
+        background-color: black;
+        background-image: linear-gradient(45deg, rgb(20, 20, 20) 25%, transparent 25%, transparent 75%, rgb(20, 20, 20) 75%, rgb(20, 20, 20)),
+            linear-gradient(45deg, rgb(20, 20, 20) 25%, transparent 25%, transparent 75%, rgb(20, 20, 20) 75%, rgb(20, 20, 20));
+        background-position: 0 0, 8px 8px;
+        background-size: 16px 16px;
+        width: 512px;
+        height: 128px;
+    }
 }
 
 .layout-box {
@@ -25,6 +39,7 @@
     margin-left: 400px;
     height: 100%;
     position: relative;
+
     .chenghao {
         position: absolute;
         top: 50%;
